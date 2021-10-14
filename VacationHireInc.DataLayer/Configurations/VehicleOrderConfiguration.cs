@@ -13,7 +13,6 @@ namespace VacationHireInc.DataLayer.Configurations
         public void Configure(EntityTypeBuilder<VehicleOrder> builder)
         {
             builder.ToTable("VehicleOrder");
-            builder.Ignore(vo => vo.OtherCurrencyPrice);
             builder.HasOne(vo => vo.User).WithMany(u => u.VehicleOrders).HasForeignKey(vo => vo.UserId);
             builder.HasOne(vo => vo.Customer).WithMany(c => c.VehicleOrders).HasForeignKey(vo => vo.CustomerId);
         }

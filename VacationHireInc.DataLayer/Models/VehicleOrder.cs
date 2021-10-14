@@ -3,7 +3,6 @@
 // Feel free to modify / share the code!
 
 using System;
-using System.Collections.Generic;
 
 namespace VacationHireInc.DataLayer.Models
 {
@@ -19,7 +18,7 @@ namespace VacationHireInc.DataLayer.Models
         public float FuelPercentageOnReturnDate { get; set; }
         public string ReturnDateComments { get; set; }
         public decimal PriceToPayUsd { get; set; }
-        public Dictionary<string, decimal> OtherCurrencyPrice { get; set; }
+        public string CurrencyPayedWith { get; set; }
 
         public Guid UserId { get; set; }
         public User User { get; set; }
