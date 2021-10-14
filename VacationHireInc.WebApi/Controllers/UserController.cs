@@ -9,6 +9,7 @@ using System.Linq;
 using VacationHireInc.DataLayer.Interfaces;
 using VacationHireInc.DataLayer.Models;
 using VacationHireInc.Security.Interfaces;
+using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.WebApi.Controllers
 {
@@ -33,8 +34,8 @@ namespace VacationHireInc.WebApi.Controllers
             User user = _dataAccessProvider.UserRepository.Get(id);
             if (user is null)
                 return NotFound();
-            user.Password = string.Empty;
-            return Ok(user);
+            var userGetModel = new UserGetModel(user);
+            return Ok(userGetModel);
         }
 
         [HttpGet("byusername/{username}")]
@@ -43,8 +44,8 @@ namespace VacationHireInc.WebApi.Controllers
             User user = _dataAccessProvider.UserRepository.GetByCondition(c => c.UserName == username).FirstOrDefault();
             if (user is null)
                 return NotFound();
-            user.Password = string.Empty;
-            return Ok(user);
+            var userGetModel = new UserGetModel(user);
+            return Ok(userGetModel);
         }
 
         [HttpGet("byemail{email}")]
@@ -53,8 +54,8 @@ namespace VacationHireInc.WebApi.Controllers
             User user = _dataAccessProvider.UserRepository.GetByCondition(c => c.Email == email).FirstOrDefault();
             if (user is null)
                 return NotFound();
-            user.Password = string.Empty;
-            return Ok(user);
+            var userGetModel = new UserGetModel(user);
+            return Ok(userGetModel);
         }
 
         [HttpGet("byprivilege/{privilege}")]
@@ -62,7 +63,8 @@ namespace VacationHireInc.WebApi.Controllers
         {
             List<User> users = _dataAccessProvider.UserRepository.GetByCondition(c => c.Privilege == privilege).ToList();
             users.ForEach(u => u.Password = string.Empty);
-            return Ok(users);
+            var userGetModels = users.Select(u => new UserGetModel(u)).ToList();
+            return Ok(userGetModels);
         }
 
         [HttpGet("privileges")]
@@ -83,12 +85,12 @@ namespace VacationHireInc.WebApi.Controllers
         public IActionResult GetPage([FromRoute] int pageid, [FromRoute] int pagesize)
         {
             List<User> usersPage = _dataAccessProvider.UserRepository.GetPage(pageid, pagesize).ToList();
-            usersPage.ForEach(u => u.Password = string.Empty);
-            return Ok(usersPage);
+            var userGetModels = usersPage.Select(u => new UserGetModel(u)).ToList();
+            return Ok(userGetModels);
         }
 
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] User user)
+        public IActionResult Authenticate([FromBody] UserAuthenticateModel user)
         {
             User dbUser = _dataAccessProvider.UserRepository.GetByCondition(u => u.UserName == user.UserName)?.FirstOrDefault();
             if (dbUser is null)
@@ -103,7 +105,7 @@ namespace VacationHireInc.WebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] User newUser)
+        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] UserCreateModel newUser)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -120,14 +122,14 @@ namespace VacationHireInc.WebApi.Controllers
 
             string hashedPassword = _hashingHelper.SaltHash(newUser.Password);
             newUser.Password = hashedPassword;
-            _dataAccessProvider.UserRepository.Create(newUser);
+            _dataAccessProvider.UserRepository.Create(newUser.GetUser());
             _dataAccessProvider.Save();
 
             return Created("", null);
         }
 
         [HttpPut]
-        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] User updatedUser)
+        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] UserUpdateModel updatedUser)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -154,14 +156,9 @@ namespace VacationHireInc.WebApi.Controllers
                 return Forbid("Admin privileged users can only be updated by themselves!");
 
             string hashedPassword = _hashingHelper.SaltHash(updatedUser.Password);
-            userToUpdate.Password = hashedPassword;
-            userToUpdate.UserName = updatedUser.UserName;
-            userToUpdate.Name = updatedUser.Name;
-            userToUpdate.Surname = updatedUser.Surname;
-            userToUpdate.Email = updatedUser.Email;
-            userToUpdate.Privilege = updatedUser.Privilege;
+            updatedUser.Password = hashedPassword;
 
-            _dataAccessProvider.UserRepository.Update(userToUpdate);
+            _dataAccessProvider.UserRepository.Update(updatedUser.SetUser(userToUpdate));
             _dataAccessProvider.Save();
 
             return Ok(userToUpdate.Id);
