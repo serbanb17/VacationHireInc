@@ -9,9 +9,8 @@ namespace VacationHireInc.Security.Interfaces
     public interface IJwtHelper
     {
         /// <summary>
-        /// Create a jwt token that contain the id in the payload
+        /// Create a <see href="https://jwt.io/">jwt</see> token that contain the id in the payload
         /// </summary>
-        /// <see href="https://jwt.io/"/>
         string GetJwt(Guid id);
 
         /// <param name="token">Jwt token to be verified</param>

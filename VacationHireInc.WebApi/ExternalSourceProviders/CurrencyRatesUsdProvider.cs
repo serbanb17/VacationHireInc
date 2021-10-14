@@ -26,7 +26,8 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
         private object _lockObj;
 
         /// <summary>
-        /// Implements ICurrencyRatesUsdProvider
+        /// Implements ICurrencyRatesUsdProvider.
+        /// Internally calls <see href="https://currencylayer.com/documentation">currencylayer API</see>
         /// </summary>
         /// <param name="apiAccessToken">
         /// token to access the api from currencylayer
