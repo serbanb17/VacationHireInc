@@ -18,7 +18,9 @@ The solution is composed of 4 projects:
   * implementation of REST API service
 * VacationHireInc.Tests
   * Contains unit tests (MSTest, Moq)  
-The web service allow for users (admin or clerk) to register and update vehicle renting orders.
+
+The web service allow for users (admin or clerk) to register and update vehicle renting orders.  
+Developed with dotnet --version 5.0.104
 
 
 ## Deploy Example
