@@ -9,6 +9,7 @@ using System.Linq;
 using VacationHireInc.DataLayer.Interfaces;
 using VacationHireInc.DataLayer.Models;
 using VacationHireInc.Security.Interfaces;
+using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.WebApi.Controllers
 {
@@ -31,14 +32,19 @@ namespace VacationHireInc.WebApi.Controllers
             Customer customer = _dataAccessProvider.CustomerRepository.Get(id);
             if (customer is null)
                 return NotFound();
-            return Ok(customer);
+            var customerGetModel = new CustomerGetModel(customer);
+            return Ok(customerGetModel);
         }
 
         [HttpGet("search/{name}/{surname}")]
         public IActionResult GetByUserName([FromRoute] string name, string surname)
         {
-            List<Customer> customers = _dataAccessProvider.CustomerRepository.GetByCondition(c => c.Name.ToLower().Contains(name.ToLower()) && c.Surname.ToLower().Contains(surname.ToLower())).ToList();
-            return Ok(customers);
+            List<Customer> customers = _dataAccessProvider.CustomerRepository.GetByCondition(c => 
+                c.Name.ToLower().Contains(name.ToLower()) 
+                && c.Surname.ToLower().Contains(surname.ToLower())
+            ).ToList();
+            var customerGetModels = customers.Select(c => new CustomerGetModel(c)).ToList();
+            return Ok(customerGetModels);
         }
 
         [HttpGet("byemail/{email}")]
@@ -47,7 +53,8 @@ namespace VacationHireInc.WebApi.Controllers
             Customer customer = _dataAccessProvider.CustomerRepository.GetByCondition(c => c.Email == email).FirstOrDefault();
             if (customer is null)
                 return NotFound();
-            return Ok(customer);
+            var customerGetModel = new CustomerGetModel(customer);
+            return Ok(customerGetModel);
         }
 
         [HttpPost("byphonenumber")]
@@ -56,7 +63,8 @@ namespace VacationHireInc.WebApi.Controllers
             Customer customer = _dataAccessProvider.CustomerRepository.GetByCondition(c => c.PhoneNumber == phoneNumber).FirstOrDefault();
             if (customer is null)
                 return NotFound();
-            return Ok(customer);
+            var customerGetModel = new CustomerGetModel(customer);
+            return Ok(customerGetModel);
         }
 
         [HttpGet("count")]
@@ -70,11 +78,12 @@ namespace VacationHireInc.WebApi.Controllers
         public IActionResult GetPage([FromRoute] int pageId, [FromRoute] int pageSize)
         {
             List<Customer> customersPage = _dataAccessProvider.CustomerRepository.GetPage(pageId, pageSize).ToList();
-            return Ok(customersPage);
+            var customerGetModels = customersPage.Select(c => new CustomerGetModel(c)).ToList();
+            return Ok(customerGetModels);
         }
 
         [HttpPost]
-        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] Customer newCustomer)
+        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] CustomerCreateModel newCustomer)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -84,14 +93,14 @@ namespace VacationHireInc.WebApi.Controllers
             if(duplicateCustomer != null)
                 return BadRequest("A customer with same email and/or phone number exists!");
 
-            _dataAccessProvider.CustomerRepository.Create(newCustomer);
+            _dataAccessProvider.CustomerRepository.Create(newCustomer.GetCustomer());
             _dataAccessProvider.Save();
 
             return Created("", null);
         }
 
         [HttpPut]
-        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] Customer updatedCustomer)
+        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] CustomerUpdateModel updatedCustomer)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -108,18 +117,7 @@ namespace VacationHireInc.WebApi.Controllers
             if (customerToUpdate == null)
                 return BadRequest("Could not find customer to update!");
 
-            customerToUpdate.Address = updatedCustomer.Address;
-            customerToUpdate.Birthday = updatedCustomer.Birthday;
-            customerToUpdate.City = updatedCustomer.City;
-            customerToUpdate.Country = updatedCustomer.Country;
-            customerToUpdate.County = updatedCustomer.County;
-            customerToUpdate.Email = updatedCustomer.Email;
-            customerToUpdate.Name = updatedCustomer.Name;
-            customerToUpdate.PhoneNumber = updatedCustomer.PhoneNumber;
-            customerToUpdate.Surname = updatedCustomer.Surname;
-            customerToUpdate.ZipCode = updatedCustomer.ZipCode;
-
-            _dataAccessProvider.CustomerRepository.Update(customerToUpdate);
+            _dataAccessProvider.CustomerRepository.Update(updatedCustomer.SetCustomer(customerToUpdate));
             _dataAccessProvider.Save();
 
             return Ok(customerToUpdate.Id);
