@@ -38,6 +38,8 @@ can authenticate with the same token on any of them). Also using EF with
 
 ![ER Diagram](erDiagram.png "ER Diagram")
 
+Note: Cascate delete is enabled by default in EF. When deleting a user, vehicle or customer, their vehicle orders will aslo get deleted.
+
 ## Extending Code
 
 Vehicles have BodyType (Truck, Minivan, Sedan) and FuelType (Diesel, CNG, LPG, Petrol, Electric, Hybrid). These values are integers in the
@@ -54,9 +56,6 @@ Next, create a new controller for the entity with CRUD operation + other specifi
 ## Example Flow
 
 ![REST API Flow Example](restApiFlow.png "REST API Flow Example")
-Note: The action method request and response data are represented by model classes in VacationHireInc.DataLayer, and depending on the method, some
-properties are ignored (ex: password is set to empty when return users). This is a bad practice and specific model classes should be implemented
-for controllers (UserSignUpModel, VehicleOrderUpdateModel, etc.). There are to such model classes: VehicleFilter and VehicleOrderFilter.
 
 ## Scripts
 
