@@ -11,13 +11,13 @@
 This is a non-commercial product to demonstrate the use of Web.API, Entity Framework code-first approach, and token authentication with JWT.
 The solution is composed of 4 projects:
 * VacationHireInc.DataLayer  
-  * implements Unit of Work and Repository pattern and it's used to initialize the database with EF Core
+  * implements Unit of Work and Repository pattern and it's used to initialize the database with EF Core and then access it with the API.
 * VacationHireInc.Security  
   * utility classes for token generation and validation and for passwords hashing
 * VacationHireInc.WebApi  
   * implementation of REST API service
 * VacationHireInc.Tests
-  * Contains unit tests (MSTest, Moq)
+  * Contains unit tests (MSTest, Moq)  
 The web service allow for users (admin or clerk) to register and update vehicle renting orders.
 
 
@@ -63,7 +63,7 @@ Solution contains useful powershell script to:
 * Run a SQL Server instance in docker: RunDockerSqlServer.ps1
 * Delete existing migrations, create a new one and update the database: CleanMigrateEF.ps1
 * Run unit tests in console: RunUnitTests.ps1
-* Run the API: RunApi.ps1
+* Run the API in console: RunApi.ps1
 
 Change directory to the solution root before running scripts!
 
