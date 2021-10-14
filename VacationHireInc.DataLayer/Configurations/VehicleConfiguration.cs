@@ -13,7 +13,6 @@ namespace VacationHireInc.DataLayer.Configurations
         public void Configure(EntityTypeBuilder<Vehicle> builder)
         {
             builder.ToTable("Vehicle");
-            builder.Ignore(v => v.OtherCurrencyPrice);
             builder.HasIndex(v => v.LicencePlate).IsUnique();
             builder.Property(v => v.LicencePlate).IsRequired().HasMaxLength(15);
         }

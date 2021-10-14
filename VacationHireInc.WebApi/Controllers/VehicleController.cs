@@ -37,9 +37,9 @@ namespace VacationHireInc.WebApi.Controllers
             if (vehicle is null)
                 return NotFound();
 
-            UpdateOtherCurrencyPrice(vehicle, usdRatesTask.Result);
+            var vehicleGetModel = new VehicleGetModel(vehicle, usdRatesTask.Result);
 
-            return Ok(vehicle);
+            return Ok(vehicleGetModel);
         }
 
         [HttpGet("fuelTypes")]
@@ -68,8 +68,8 @@ namespace VacationHireInc.WebApi.Controllers
         {
             var usdRatesTask = _currencyRatesUsdProvider.GetRatesAsync();
             List<Vehicle> vehiclesPage = _dataAccessProvider.VehicleRepository.GetPage(pageId, pageSize).ToList();
-            vehiclesPage.ForEach(v => UpdateOtherCurrencyPrice(v, usdRatesTask.Result));
-            return Ok(vehiclesPage);
+            var vehicleGetModels = vehiclesPage.Select(v => new VehicleGetModel(v, usdRatesTask.Result)).ToList();
+            return Ok(vehicleGetModels);
         }
 
         [HttpPost("filter")]
@@ -93,13 +93,13 @@ namespace VacationHireInc.WebApi.Controllers
                 && (vehicleFilter.PriceUsdMax == null || vehicleFilter.PriceUsdMax >= c.PriceUsd)
             ).ToList();
 
-            vehicles.ForEach(v => UpdateOtherCurrencyPrice(v, usdRatesTask.Result));
+            var vehicleGetModels = vehicles.Select(v => new VehicleGetModel(v, usdRatesTask.Result)).ToList();
 
-            return Ok(vehicles);
+            return Ok(vehicleGetModels);
         }
 
         [HttpPost]
-        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] Vehicle newVehicle)
+        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleCreateModel newVehicle)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -108,14 +108,14 @@ namespace VacationHireInc.WebApi.Controllers
             if (duplicateVehicle != null)
                 return BadRequest("A vehicle with same licence plate exists!");
 
-            _dataAccessProvider.VehicleRepository.Create(newVehicle);
+            _dataAccessProvider.VehicleRepository.Create(newVehicle.GetVehicle());
             _dataAccessProvider.Save();
 
             return Created("", null);
         }
 
         [HttpPut]
-        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] Vehicle updatedVehicle)
+        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleUpdateModel updatedVehicle)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -130,16 +130,7 @@ namespace VacationHireInc.WebApi.Controllers
             if (vehicleToUpdate == null)
                 return BadRequest("Could not find vehicle to update!");
 
-            vehicleToUpdate.BodyType = updatedVehicle.BodyType;
-            vehicleToUpdate.FuelType = updatedVehicle.FuelType;
-            vehicleToUpdate.LicencePlate = updatedVehicle.LicencePlate;
-            vehicleToUpdate.ManufactureDate = updatedVehicle.ManufactureDate;
-            vehicleToUpdate.Manufacturer = updatedVehicle.Manufacturer;
-            vehicleToUpdate.Model = updatedVehicle.Model;
-            vehicleToUpdate.PriceUsd = updatedVehicle.PriceUsd;
-            vehicleToUpdate.Seats = updatedVehicle.Seats;
-
-            _dataAccessProvider.VehicleRepository.Update(vehicleToUpdate);
+            _dataAccessProvider.VehicleRepository.Update(updatedVehicle.SetVehicle(vehicleToUpdate));
             _dataAccessProvider.Save();
 
             return Ok(vehicleToUpdate.Id);
@@ -159,14 +150,6 @@ namespace VacationHireInc.WebApi.Controllers
             _dataAccessProvider.Save();
 
             return Ok(id);
-        }
-
-        private void UpdateOtherCurrencyPrice(Vehicle vehicle, Dictionary<string, decimal> usdRates)
-        {
-            vehicle.OtherCurrencyPrice = new Dictionary<string, decimal>();
-            if (usdRates != null)
-                foreach (var kv in usdRates)
-                    vehicle.OtherCurrencyPrice.Add(kv.Key, vehicle.PriceUsd * kv.Value);
         }
     }
 }

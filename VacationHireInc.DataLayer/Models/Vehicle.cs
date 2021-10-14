@@ -19,7 +19,6 @@ namespace VacationHireInc.DataLayer.Models
         public byte Seats { get; set; }
         public string LicencePlate { get; set; }
         public decimal PriceUsd { get; set; }
-        public Dictionary<string, decimal> OtherCurrencyPrice { get; set; }
         public List<VehicleOrder> VehicleOrders { get; set; }
     }
 }
