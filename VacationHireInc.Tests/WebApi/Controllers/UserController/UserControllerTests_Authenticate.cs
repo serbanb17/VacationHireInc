@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
+using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -16,16 +17,15 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
         {
             //arrange
             var targetUser = _usersList.First();
-            var user = new User
+            var userAuthenticateModel = new UserAuthenticateModel
             {
-                Id = targetUser.Id,
                 UserName = targetUser.UserName,
                 Password = targetUser.UserName + "pw"
             };
-            string expected = _jwtHelper.GetJwt(user.Id);
+            string expected = _jwtHelper.GetJwt(targetUser.Id);
 
             //act
-            IActionResult result = _userControllerSut.Authenticate(user);
+            IActionResult result = _userControllerSut.Authenticate(userAuthenticateModel);
             bool isResultOk = result is OkObjectResult resultObj
                                     && resultObj.Value is string token
                                     && token == expected;
@@ -39,15 +39,15 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
         {
             //arrange
             var targetUser = _usersList.First();
-            var user = new User
+            var userAuthenticateModel = new UserAuthenticateModel
             {
                 UserName = targetUser.UserName + "2",
                 Password = targetUser.UserName + "pw"
             };
-            string expected = _jwtHelper.GetJwt(user.Id);
+            string expected = _jwtHelper.GetJwt(targetUser.Id);
 
             //act
-            IActionResult result = _userControllerSut.Authenticate(user);
+            IActionResult result = _userControllerSut.Authenticate(userAuthenticateModel);
             bool isResultOk = result is NotFoundObjectResult;
 
             //assert
@@ -59,15 +59,15 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
         {
             //arrange
             var targetUser = _usersList.First();
-            var user = new User
+            var userAuthenticateModel = new UserAuthenticateModel
             {
                 UserName = targetUser.UserName,
                 Password = targetUser.UserName + "pw2"
             };
-            string expected = _jwtHelper.GetJwt(user.Id);
+            string expected = _jwtHelper.GetJwt(targetUser.Id);
 
             //act
-            IActionResult result = _userControllerSut.Authenticate(user);
+            IActionResult result = _userControllerSut.Authenticate(userAuthenticateModel);
             bool isResultOk = result is UnauthorizedObjectResult;
 
             //assert

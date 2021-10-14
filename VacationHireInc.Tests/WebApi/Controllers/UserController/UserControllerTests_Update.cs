@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
+using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -20,7 +21,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             User userToUpdate = _usersList.First(u => u.Id != user.Id && u.Privilege != Privilege.Admin);
             string token = _jwtHelper.GetJwt(user.Id);
-            var updatedUser = new User
+            var updatedUser = new UserUpdateModel
             {
                 Id = userToUpdate.Id,
                 Name = "Mikayla",
@@ -57,7 +58,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             User userToUpdate = _usersList.First(u => u.Id != user.Id);
             string token = _jwtHelper.GetJwt(user.Id);
-            var updatedUser = new User
+            var updatedUser = new UserUpdateModel
             {
                 Id = userToUpdate.Id,
                 Name = "Mikayla",
@@ -86,7 +87,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             User user = _usersList.First(u => u.Privilege == Privilege.Clerk);
             User userToUpdate = _usersList.First(u => u.Id != user.Id);
             string token = _jwtHelper.GetJwt(user.Id);
-            var updatedUser = new User
+            var updatedUser = new UserUpdateModel
             {
                 Id = userToUpdate.Id,
                 Name = "Mikayla",
@@ -115,7 +116,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             User userToUpdate = _usersList.First(u => u.Id != user.Id);
             string token = _jwtHelper.GetJwt(user.Id);
-            var updatedUser = new User
+            var updatedUser = new UserUpdateModel
             {
                 Id = new Guid("961b96e2e7524658b70cef31d9e2a707"),
                 Name = "Mikayla",
@@ -144,7 +145,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             User userToUpdate = _usersList.First(u => u.Id != user.Id && u.Privilege == Privilege.Admin);
             string token = _jwtHelper.GetJwt(user.Id);
-            var updatedUser = new User
+            var updatedUser = new UserUpdateModel
             {
                 Id = userToUpdate.Id,
                 Name = "Mikayla",

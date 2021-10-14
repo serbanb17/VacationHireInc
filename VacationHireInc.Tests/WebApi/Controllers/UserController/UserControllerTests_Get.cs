@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
+using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -27,7 +28,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             {
                 IActionResult result = _userControllerSut.Get(id);
                 allReturnsCorrect &= result is OkObjectResult okResult
-                                     && okResult.Value is User user
+                                     && okResult.Value is UserGetModel user
                                      && user.Id == id;
             }
 
@@ -65,7 +66,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             {
                 IActionResult result = _userControllerSut.GetByUserName(username);
                 allReturnsCorrect &= result is OkObjectResult okResult
-                                     && okResult.Value is User user
+                                     && okResult.Value is UserGetModel user
                                      && user.UserName == username;
             }
 
@@ -103,7 +104,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             {
                 IActionResult result = _userControllerSut.GetByEmail(email);
                 allReturnsCorrect &= result is OkObjectResult okResult
-                                     && okResult.Value is User user
+                                     && okResult.Value is UserGetModel user
                                      && user.Email == email;
             }
 
@@ -138,7 +139,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             //act
             IActionResult result = _userControllerSut.GetByPrivilege(privilege);
             bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is List<User> resultUsers
+                              && resultObj.Value is List<UserGetModel> resultUsers
                               && resultUsers.Count == _usersList.Count(u => u.Privilege == privilege)
                               && resultUsers.All(u => _usersList.Any(x => x.Id == u.Id));
 
@@ -179,7 +180,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             //act
             IActionResult result = _userControllerSut.GetPage(pageId, pageSize);
             bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is List<User> users
+                              && resultObj.Value is List<UserGetModel> users
                               && users.Count == expected.Count
                               && users.Select((u, idx) => expected[idx].Id == u.Id).All(b => b);
 

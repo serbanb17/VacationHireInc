@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
+using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -19,9 +20,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             //arrange
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             string token = _jwtHelper.GetJwt(user.Id);
-            var newUser = new User
+            var newUser = new UserCreateModel
             {
-                Id = new Guid(),
                 Name = "Mikayla",
                 Surname = "Vargas",
                 UserName = "mikaylavargas",
@@ -53,9 +53,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             //arrange
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             string token = _jwtHelper.GetJwt(user.Id);
-            var newUser = new User
+            var newUser = new UserCreateModel
             {
-                Id = new Guid(),
                 Name = "Mikayla",
                 Surname = "Vargas",
                 UserName = "mikaylavargas",
@@ -81,9 +80,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             //arrange
             User user = _usersList.First(u => u.Privilege == Privilege.Clerk);
             string token = _jwtHelper.GetJwt(user.Id);
-            var newUser = new User
+            var newUser = new UserCreateModel
             {
-                Id = new Guid(),
                 Name = "Mikayla",
                 Surname = "Vargas",
                 UserName = "mikaylavargas",
@@ -109,7 +107,16 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             //arrange
             User user = _usersList.First(u => u.Privilege == Privilege.Admin);
             string token = _jwtHelper.GetJwt(user.Id);
-            var newUser = _usersList.First(u => u.Id != user.Id);
+            var userToAdd = _usersList.First(u => u.Id != user.Id);
+            var newUser = new UserCreateModel
+            {
+                Name = userToAdd.Name,
+                Surname = userToAdd.Surname,
+                UserName = userToAdd.UserName,
+                Email = userToAdd.Email,
+                Password = userToAdd.Password,
+                Privilege = Privilege.Clerk
+            };
             var outId = user.Id;
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
