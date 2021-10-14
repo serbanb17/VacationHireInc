@@ -41,9 +41,9 @@ namespace VacationHireInc.WebApi.Controllers
             if (vehicleOrder is null)
                 return NotFound();
 
-            UpdateOtherCurrencyPrice(vehicleOrder, usdRatesTask.Result);
+            var vehicleOrderGetModel = new VehicleOrderGetModel(vehicleOrder, usdRatesTask.Result);
 
-            return Ok(vehicleOrder);
+            return Ok(vehicleOrderGetModel);
         }
 
         [HttpGet("count")]
@@ -64,8 +64,8 @@ namespace VacationHireInc.WebApi.Controllers
 
             var usdRatesTask = _currencyRatesUsdProvider.GetRatesAsync();
             List<VehicleOrder> vehicleOrdersPage = _dataAccessProvider.VehicleOrderRepository.GetPage(pageId, pageSize).ToList();
-            vehicleOrdersPage.ForEach(vo => UpdateOtherCurrencyPrice(vo, usdRatesTask.Result));
-            return Ok(vehicleOrdersPage);
+            var vehicleOrderGetModels = vehicleOrdersPage.Select(vo => new VehicleOrderGetModel(vo, usdRatesTask.Result));
+            return Ok(vehicleOrderGetModels);
         }
 
         [HttpPost("filter")]
@@ -89,13 +89,13 @@ namespace VacationHireInc.WebApi.Controllers
                 && (vehicleOrderFilter.ActualReturnDateMax == null || vehicleOrderFilter.ActualReturnDateMax >= c.ActualReturnDate)
             ).ToList();
 
-            vehicleOrders.ForEach(vo => UpdateOtherCurrencyPrice(vo, usdRatesTask.Result));
+            var vehicleOrderGetModels = vehicleOrders.Select(vo => new VehicleOrderGetModel(vo, usdRatesTask.Result));
 
-            return Ok(vehicleOrders);
+            return Ok(vehicleOrderGetModels);
         }
 
         [HttpPost]
-        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleOrder vehicleOrder)
+        public IActionResult Create([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleOrderCreateModel vehicleOrder)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -104,15 +104,14 @@ namespace VacationHireInc.WebApi.Controllers
             if (customer is null)
                 return NotFound("Customer not found!");
 
-            vehicleOrder.UserId = userId;
-            _dataAccessProvider.VehicleOrderRepository.Create(vehicleOrder);
+            _dataAccessProvider.VehicleOrderRepository.Create(vehicleOrder.GetVehicleOrder(userId));
             _dataAccessProvider.Save();
             
             return Created("", null);
         }
 
         [HttpPut]
-        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleOrder updatedVehicleOrder)
+        public IActionResult Update([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleOrderUpdateModel updatedVehicleOrder)
         {
             if (!_jwtHelper.IsJwtValid(token, true, out Guid userId))
                 return Unauthorized();
@@ -128,19 +127,7 @@ namespace VacationHireInc.WebApi.Controllers
             if (vehicleOrderToUpdate.UserId != userId)
                 return Unauthorized("Only user assigned to an order can update that order!");
 
-            vehicleOrderToUpdate.OrderDate = updatedVehicleOrder.OrderDate;
-            vehicleOrderToUpdate.OrderDateComments = updatedVehicleOrder.OrderDateComments;
-            vehicleOrderToUpdate.PriceToPayUsd = updatedVehicleOrder.PriceToPayUsd;
-            vehicleOrderToUpdate.ReturnDateComments = updatedVehicleOrder.ReturnDateComments;
-            vehicleOrderToUpdate.Status = updatedVehicleOrder.Status;
-            vehicleOrderToUpdate.VehicleId = updatedVehicleOrder.VehicleId;
-            vehicleOrderToUpdate.ActualReturnDate = updatedVehicleOrder.ActualReturnDate;
-            vehicleOrderToUpdate.CustomerId = updatedVehicleOrder.CustomerId;
-            vehicleOrderToUpdate.ExpectedReturnDate = updatedVehicleOrder.ExpectedReturnDate;
-            vehicleOrderToUpdate.FuelPercentageOnOrderDate = updatedVehicleOrder.FuelPercentageOnOrderDate;
-            vehicleOrderToUpdate.FuelPercentageOnReturnDate = updatedVehicleOrder.FuelPercentageOnReturnDate;
-
-            _dataAccessProvider.VehicleOrderRepository.Update(vehicleOrderToUpdate);
+            _dataAccessProvider.VehicleOrderRepository.Update(updatedVehicleOrder.SetVehicleOrder(vehicleOrderToUpdate));
             _dataAccessProvider.Save();
 
             return Ok(vehicleOrderToUpdate.Id);
@@ -163,14 +150,6 @@ namespace VacationHireInc.WebApi.Controllers
             _dataAccessProvider.Save();
 
             return Ok(id);
-        }
-
-        private void UpdateOtherCurrencyPrice(VehicleOrder vehicleOrder, Dictionary<string, decimal> usdRates)
-        {
-            vehicleOrder.OtherCurrencyPrice = new Dictionary<string, decimal>();
-            if (usdRates != null)
-                foreach (var kv in usdRates)
-                    vehicleOrder.OtherCurrencyPrice.Add(kv.Key, vehicleOrder.PriceToPayUsd * kv.Value);
         }
     }
 }
