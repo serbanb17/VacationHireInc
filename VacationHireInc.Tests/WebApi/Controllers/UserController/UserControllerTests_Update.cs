@@ -43,7 +43,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
                               && updatedUser.Surname == userToUpdate.Surname
                               && updatedUser.UserName == userToUpdate.UserName
                               && updatedUser.Email == userToUpdate.Email
-                              && _hashingHelper.SaltHash(updatedUser.Password) == userToUpdate.Password
+                              && updatedUser.Password == userToUpdate.Password
                               && updatedUser.Privilege == userToUpdate.Privilege;
 
             //assert
