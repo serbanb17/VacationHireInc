@@ -66,3 +66,5 @@ Solution contains useful powershell script to:
 * Run the API: RunApi.ps1
 
 Change directory to the solution root before running scripts!
+
+The API can be accessed from a browser with swagger (by default, on port 44002). To authenticate, use for password the username + "pw".
