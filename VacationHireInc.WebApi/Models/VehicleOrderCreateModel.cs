@@ -9,7 +9,6 @@ namespace VacationHireInc.WebApi.Models
 {
     public class VehicleOrderCreateModel
     {
-        public Guid Id { get; set; }
         public Status Status { get; set; }
         public DateTime OrderDate { get; set; }
         public float FuelPercentageOnOrderDate { get; set; }

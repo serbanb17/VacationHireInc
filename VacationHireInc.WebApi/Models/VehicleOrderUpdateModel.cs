@@ -26,20 +26,20 @@ namespace VacationHireInc.WebApi.Models
 
         public VehicleOrder SetVehicleOrder(VehicleOrder vehicleOrder)
         {
-            Id = vehicleOrder.Id;
-            Status = vehicleOrder.Status;
-            OrderDate = vehicleOrder.OrderDate;
-            FuelPercentageOnOrderDate = vehicleOrder.FuelPercentageOnOrderDate;
-            OrderDateComments = vehicleOrder.OrderDateComments;
-            ExpectedReturnDate = vehicleOrder.ExpectedReturnDate;
-            ActualReturnDate = vehicleOrder.ActualReturnDate;
-            FuelPercentageOnReturnDate = vehicleOrder.FuelPercentageOnReturnDate;
-            ReturnDateComments = vehicleOrder.ReturnDateComments;
-            PriceToPayUsd = vehicleOrder.PriceToPayUsd;
-            CurrencyPayedWith = vehicleOrder.CurrencyPayedWith;
-            UserId = vehicleOrder.UserId;
-            CustomerId = vehicleOrder.CustomerId;
-            VehicleId = vehicleOrder.VehicleId;
+            vehicleOrder.Id = Id;
+            vehicleOrder.Status = Status;
+            vehicleOrder.OrderDate = OrderDate;
+            vehicleOrder.FuelPercentageOnOrderDate = FuelPercentageOnOrderDate;
+            vehicleOrder.OrderDateComments = OrderDateComments;
+            vehicleOrder.ExpectedReturnDate = ExpectedReturnDate;
+            vehicleOrder.ActualReturnDate = ActualReturnDate;
+            vehicleOrder.FuelPercentageOnReturnDate = FuelPercentageOnReturnDate;
+            vehicleOrder.ReturnDateComments = ReturnDateComments;
+            vehicleOrder.PriceToPayUsd = PriceToPayUsd;
+            vehicleOrder.CurrencyPayedWith = CurrencyPayedWith;
+            vehicleOrder.UserId = UserId;
+            vehicleOrder.CustomerId = CustomerId;
+            vehicleOrder.VehicleId = VehicleId;
             return vehicleOrder;
         }
     }

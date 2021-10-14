@@ -104,6 +104,10 @@ namespace VacationHireInc.WebApi.Controllers
             if (customer is null)
                 return NotFound("Customer not found!");
 
+            Vehicle vehicle = _dataAccessProvider.VehicleRepository.Get(vehicleOrder.VehicleId);
+            if (vehicle is null)
+                return NotFound("Vehicle not found!");
+
             _dataAccessProvider.VehicleOrderRepository.Create(vehicleOrder.GetVehicleOrder(userId));
             _dataAccessProvider.Save();
             
@@ -120,9 +124,20 @@ namespace VacationHireInc.WebApi.Controllers
             if (customer is null)
                 return NotFound("Customer not found!");
 
+            Vehicle vehicle = _dataAccessProvider.VehicleRepository.Get(updatedVehicleOrder.VehicleId);
+            if (vehicle is null)
+                return NotFound("Vehicle not found!");
+
             VehicleOrder vehicleOrderToUpdate = _dataAccessProvider.VehicleOrderRepository.Get(updatedVehicleOrder.Id);
             if (vehicleOrderToUpdate is null)
                 return NotFound("Vehicle order not found!");
+
+            if (userId != updatedVehicleOrder.UserId)
+            {
+                User user = _dataAccessProvider.UserRepository.Get(updatedVehicleOrder.UserId);
+                if (user is null)
+                    return NotFound("User not found not found!");
+            }
 
             if (vehicleOrderToUpdate.UserId != userId)
                 return Unauthorized("Only user assigned to an order can update that order!");
