@@ -11,6 +11,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using VacationHireInc.WebApi.Interfaces;
 
@@ -24,6 +25,7 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
         private Dictionary<string, decimal> _cachedQuotes;
         private DateTime _cacheExpire;
         private object _lockObj;
+        private SemaphoreSlim _semaphoreSlim;
 
         /// <summary>
         /// Implements ICurrencyRatesUsdProvider.
@@ -45,6 +47,7 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
             _httpClient = httpClient;
             _cacheExpire = DateTime.Now.AddSeconds(-1);
             _lockObj = new object();
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
         /// <summary>
@@ -64,10 +67,12 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
         private void UpdateCacheThreadSafe()
         {
             if (_cacheExpire < DateTime.Now)
-                lock (_lockObj)
-                    if (_cacheExpire < DateTime.Now)
-                        //cannot use await inside lock
-                        Task.Run(async () => await UpdateCache()).Wait();
+            {
+                _semaphoreSlim.Wait(-1);
+                if (_cacheExpire < DateTime.Now)
+                    Task.Run(async () => await UpdateCache()).Wait();
+                _semaphoreSlim.Release();
+            }
         }
 
         private async Task UpdateCache()
