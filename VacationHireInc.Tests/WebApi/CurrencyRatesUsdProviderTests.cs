@@ -38,7 +38,7 @@ namespace VacationHireInc.Tests.WebApi
             _mockMessageHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(_mockResponse);
-            _currencyRatesUsdProviderSut = new CurrencyRatesUsdProvider(string.Empty, _cacheLifeTimeSeconds, new HttpClient(_mockMessageHandler.Object));
+            _currencyRatesUsdProviderSut = new CurrencyRatesUsdProvider(string.Empty, _cacheLifeTimeSeconds, new HttpClient(_mockMessageHandler.Object), new ObjectCache<Dictionary<string, decimal>>());
 
             _responseValues = new Dictionary<string, decimal>();
             string[] kvMerged = ResponseValuesMerged.Split("__");

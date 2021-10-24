@@ -19,12 +19,11 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
 {
     public class CurrencyRatesUsdProvider : ICurrencyRatesUsdProvider
     {
+        private const string CacheKey = "CachedQuotes";
         private readonly string _requestUri;
         private readonly uint _cacheLifeTime;
         private readonly HttpClient _httpClient;
-        private Dictionary<string, decimal> _cachedQuotes;
-        private DateTime _cacheExpire;
-        private object _lockObj;
+        private IObjectCache<Dictionary<string, decimal>> _cache;
         private SemaphoreSlim _semaphoreSlim;
 
         /// <summary>
@@ -40,13 +39,12 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
         /// <param name="httpClient">
         /// Client used to make requests to API
         /// </param>
-        public CurrencyRatesUsdProvider(string apiAccessToken, uint cacheLifeTime, HttpClient httpClient)
+        public CurrencyRatesUsdProvider(string apiAccessToken, uint cacheLifeTime, HttpClient httpClient, IObjectCache<Dictionary<string, decimal>> cache)
         {
             _requestUri = @"http://api.currencylayer.com/live?access_key=" + apiAccessToken;
             _cacheLifeTime = cacheLifeTime;
             _httpClient = httpClient;
-            _cacheExpire = DateTime.Now.AddSeconds(-1);
-            _lockObj = new object();
+            _cache = cache;
             _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
 
@@ -60,17 +58,20 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
         public async Task<Dictionary<string, decimal>> GetRatesAsync()
         {
             await Task.Run(() => UpdateCacheThreadSafe());
-            var resultClone = _cachedQuotes?.ToDictionary(kv => new string(kv.Key), kv => kv.Value);
+            _cache.TryGet(CacheKey, out var dict);
+            var resultClone = dict?.ToDictionary(kv => new string(kv.Key), kv => kv.Value);
             return resultClone;
         }
 
         private void UpdateCacheThreadSafe()
         {
-            if (_cacheExpire < DateTime.Now)
+            if(!_cache.TryGet(CacheKey, out _))
             {
                 _semaphoreSlim.Wait(-1);
-                if (_cacheExpire < DateTime.Now)
+
+                if (!_cache.TryGet(CacheKey, out _))
                     Task.Run(async () => await UpdateCache()).Wait();
+
                 _semaphoreSlim.Release();
             }
         }
@@ -109,8 +110,7 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
                 newCache = null;
             }
 
-            _cachedQuotes = newCache;
-            _cacheExpire = DateTime.Now.AddSeconds(_cacheLifeTime);
+            _cache.Add(CacheKey, DateTime.Now.AddSeconds(_cacheLifeTime), newCache);
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using VacationHireInc.DataLayer;
@@ -40,9 +41,14 @@ namespace VacationHireInc.WebApi
             uint currencyApiCacheLifeTimeSec = uint.Parse(Configuration["CurrencyApi:CacheLifeTimeSec"]);
             
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration["DbConnectionString"]));
-            services.AddSingleton(typeof(IJwtHelper), new JwtHelper(jwtKey, Configuration["Jwt:Issuer"], jwtExpirationSeconds));
+            services.AddSingleton(typeof(IJwtHelper), new JwtHelper(jwtKey, 
+                                                                    Configuration["Jwt:Issuer"], 
+                                                                    jwtExpirationSeconds));
             services.AddSingleton(typeof(IHashingHelper), new HashingHelper(passwordSalt));
-            services.AddSingleton(typeof(ICurrencyRatesUsdProvider), new CurrencyRatesUsdProvider(Configuration["CurrencyApi:Token"], currencyApiCacheLifeTimeSec, new HttpClient()));
+            services.AddSingleton(typeof(ICurrencyRatesUsdProvider), new CurrencyRatesUsdProvider(Configuration["CurrencyApi:Token"], 
+                                                                                                  currencyApiCacheLifeTimeSec,
+                                                                                                  new HttpClient(), 
+                                                                                                  new ObjectCache<Dictionary<string, decimal>>()));
             services.AddScoped<IDataAccessProvider, DataAccessProvider>();
             services.AddControllers();
             
