@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.WebApi", "V
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.DataLayer", "VacationHireInc.DataLayer\VacationHireInc.DataLayer.csproj", "{90AB39A8-796B-401D-86C0-744C430807BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationHireInc.Security", "VacationHireInc.Security\VacationHireInc.Security.csproj", "{A3076E6E-8FD9-4360-AED4-EB5EAFA91631}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.Security", "VacationHireInc.Security\VacationHireInc.Security.csproj", "{A3076E6E-8FD9-4360-AED4-EB5EAFA91631}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationHireInc.Tests", "VacationHireInc.Tests\VacationHireInc.Tests.csproj", "{C9CC799E-3AD9-4C6F-AA73-BC0A65D6C63B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.Tests", "VacationHireInc.Tests\VacationHireInc.Tests.csproj", "{C9CC799E-3AD9-4C6F-AA73-BC0A65D6C63B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationHireInc.BusinessLayer", "VacationHireInc.BusinessLayer\VacationHireInc.BusinessLayer.csproj", "{59879E32-E20E-49DD-9EE9-952F5A7A5680}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C9CC799E-3AD9-4C6F-AA73-BC0A65D6C63B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9CC799E-3AD9-4C6F-AA73-BC0A65D6C63B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9CC799E-3AD9-4C6F-AA73-BC0A65D6C63B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59879E32-E20E-49DD-9EE9-952F5A7A5680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59879E32-E20E-49DD-9EE9-952F5A7A5680}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59879E32-E20E-49DD-9EE9-952F5A7A5680}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59879E32-E20E-49DD-9EE9-952F5A7A5680}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
