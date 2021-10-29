@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VacationHireInc.DataLayer\VacationHireInc.DataLayer.csproj" />
+    <ProjectReference Include="..\VacationHireInc.Security\VacationHireInc.Security.csproj" />
+  </ItemGroup>
+
+</Project>
