@@ -17,8 +17,6 @@ namespace VacationHireInc.WebApi.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly IDataAccessProvider _dataAccessProvider;
-        private readonly IJwtHelper _jwtHelper;
         private readonly ICustomerLogic _customerLogic;
 
         public CustomerController(IDataAccessProvider dataAccessProvider, IJwtHelper jwtHelper)
