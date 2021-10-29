@@ -21,8 +21,6 @@ namespace VacationHireInc.WebApi.Controllers
 
         public CustomerController(IDataAccessProvider dataAccessProvider, IJwtHelper jwtHelper)
         {
-            _dataAccessProvider = dataAccessProvider;
-            _jwtHelper = jwtHelper;
             _customerLogic = new CustomerLogic(dataAccessProvider, jwtHelper);
         }
 
