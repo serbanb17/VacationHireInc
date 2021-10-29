@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VacationHireInc.BusinessLayer\VacationHireInc.BusinessLayer.csproj" />
     <ProjectReference Include="..\VacationHireInc.DataLayer\VacationHireInc.DataLayer.csproj" />
     <ProjectReference Include="..\VacationHireInc.Security\VacationHireInc.Security.csproj" />
   </ItemGroup>
