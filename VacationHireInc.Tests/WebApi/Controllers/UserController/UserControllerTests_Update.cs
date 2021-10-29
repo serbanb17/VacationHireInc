@@ -8,7 +8,7 @@ using Moq;
 using System;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
-using VacationHireInc.WebApi.Models;
+using VacationHireInc.BusinessLayer.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -73,11 +73,11 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 
             //act
             IActionResult result = _userControllerSut.Update(token, updatedUser);
-            bool isResultOk = result is UnauthorizedResult;
+            bool isResultUnauthorized = result is UnauthorizedObjectResult;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
-            Assert.IsTrue(isResultOk, "Should return unauthorized");
+            Assert.IsTrue(isResultUnauthorized, "Should return unauthorized");
         }
 
         [TestMethod]

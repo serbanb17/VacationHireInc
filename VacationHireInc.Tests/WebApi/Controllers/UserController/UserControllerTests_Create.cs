@@ -7,8 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Linq;
+using VacationHireInc.BusinessLayer.Models;
 using VacationHireInc.DataLayer.Models;
-using VacationHireInc.WebApi.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -67,7 +67,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 
             //act
             IActionResult result = _userControllerSut.Create(token, newUser);
-            bool isResultOk = result is UnauthorizedResult;
+            bool isResultOk = result is UnauthorizedObjectResult;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);

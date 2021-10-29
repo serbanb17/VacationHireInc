@@ -132,7 +132,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 
             //act
             IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is UnauthorizedResult && _usersList.Contains(userToDelete);
+            bool isResultOk = result is UnauthorizedObjectResult && _usersList.Contains(userToDelete);
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);

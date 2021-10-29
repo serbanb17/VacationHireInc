@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
-using VacationHireInc.WebApi.Models;
+using VacationHireInc.BusinessLayer.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {

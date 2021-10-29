@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using VacationHireInc.DataLayer.Models;
-using VacationHireInc.WebApi.Models;
+using VacationHireInc.BusinessLayer.Models;
 
 namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
 {
@@ -47,7 +47,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             bool notFound = result is NotFoundObjectResult;
 
             //assert
-            Assert.IsFalse(notFound, "Should return not found!");
+            Assert.IsTrue(notFound, "Should return not found!");
         }
 
         #endregion Get
@@ -85,7 +85,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             bool notFound = result is NotFoundObjectResult;
 
             //assert
-            Assert.IsFalse(notFound, "Should return not found!");
+            Assert.IsTrue(notFound, "Should return not found!");
         }
 
         #endregion GetByUserName
@@ -123,7 +123,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             bool notFound = result is NotFoundObjectResult;
 
             //assert
-            Assert.IsFalse(notFound, "Should return not found!");
+            Assert.IsTrue(notFound, "Should return not found!");
         }
 
         #endregion GetByEmail
