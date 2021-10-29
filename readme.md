@@ -14,6 +14,8 @@ The solution is composed of 4 projects:
   * implements Unit of Work and Repository pattern and it's used to initialize the database with EF Core and then access it with the API.
 * VacationHireInc.Security  
   * utility classes for token generation and validation and for passwords hashing
+* VacationHireInc.BusinessLayer
+  * implements all the CRUD and other logic for entities
 * VacationHireInc.WebApi  
   * implementation of REST API service
 * VacationHireInc.Tests
@@ -51,8 +53,9 @@ values.
 
 To add a new product for rent, implement the model class that will represent the entity by inheriting BaseModel class. Then add a DbSet 
 of the new entity in AppDbContext, a new configuration class and, optionally, an initializer. Configuration and initialization should
-then be called by OnModelCreating in AppDbContext. Now you can create a new migration and update the database. 
-Next, create a new controller for the entity with CRUD operation + other specific action methods. Use the existing code as reference.
+then be called by OnModelCreating in AppDbContext. Now you can create a new migration and update the database.
+Next, create new logic class in BusinessLayer controller in WebApi for the entity with CRUD operation + other specific action methods.
+Use the existing code as reference.
 
 
 ## Example Flow
