@@ -88,21 +88,8 @@ namespace VacationHireInc.WebApi.ExternalSourceProviders
                     string responseBody = await response.Content.ReadAsStringAsync();
                     dynamic respObj = JsonConvert.DeserializeObject<ExpandoObject>(responseBody, new ExpandoObjectConverter());
                     dynamic quotes = respObj.quotes;
-                    JObject parsedResponseBody = JObject.Parse(responseBody);
-                    var parsedQuotes = parsedResponseBody["quotes"];
-                    if (parsedQuotes != null)
-                    {
-                        newCache = new Dictionary<string, decimal>();
-                        foreach (var q in parsedQuotes)
-                        {
-                            string name = ((JProperty)q)?.Name?.ToString();
-                            string valStr = ((JProperty)q)?.Value?.ToString();
-                            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(valStr)
-                                && decimal.TryParse(valStr, out decimal val)
-                                && !newCache.ContainsKey(name))
-                                newCache.Add(name, val);
-                        }
-                    }
+                    string quotesJson = JsonConvert.SerializeObject(quotes);
+                    newCache = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(quotesJson);
                 }
             }
             catch
