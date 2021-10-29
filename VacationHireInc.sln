@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.Security", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.Tests", "VacationHireInc.Tests\VacationHireInc.Tests.csproj", "{C9CC799E-3AD9-4C6F-AA73-BC0A65D6C63B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationHireInc.BusinessLayer", "VacationHireInc.BusinessLayer\VacationHireInc.BusinessLayer.csproj", "{59879E32-E20E-49DD-9EE9-952F5A7A5680}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VacationHireInc.BusinessLayer", "VacationHireInc.BusinessLayer\VacationHireInc.BusinessLayer.csproj", "{59879E32-E20E-49DD-9EE9-952F5A7A5680}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
