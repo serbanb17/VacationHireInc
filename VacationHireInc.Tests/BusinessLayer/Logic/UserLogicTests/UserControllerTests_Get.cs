@@ -10,9 +10,9 @@ using System.Linq;
 using VacationHireInc.DataLayer.Models;
 using VacationHireInc.BusinessLayer.Models;
 
-namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
+namespace VacationHireInc.Tests.BusinessLayer.Logic.UserLogicTests
 {
-    public partial class UserControllerTests
+    public partial class UserLogicTests
     {
         #region Get
 
@@ -26,10 +26,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             bool allReturnsCorrect = true;
             foreach (Guid id in ids)
             {
-                IActionResult result = _userControllerSut.Get(id);
-                allReturnsCorrect &= result is OkObjectResult okResult
-                                     && okResult.Value is UserGetModel user
-                                     && user.Id == id;
+                LogicResult<UserGetModel> result = _userLogicSut.Get(id);
+                allReturnsCorrect &= result.ResultCode == ResultCode.Ok
+                                     && result.Object.Id == id;
             }
 
             //assert
@@ -43,8 +42,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             var id = new Guid("774809d21839469e9bf57d3177770ae5");
 
             //act
-            IActionResult result = _userControllerSut.Get(id);
-            bool notFound = result is NotFoundObjectResult;
+            LogicResult<UserGetModel> result = _userLogicSut.Get(id);
+            bool notFound = result.ResultCode == ResultCode.NotFound;
 
             //assert
             Assert.IsTrue(notFound, "Should return not found!");
@@ -64,10 +63,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             bool allReturnsCorrect = true;
             foreach (string username in usernames)
             {
-                IActionResult result = _userControllerSut.GetByUserName(username);
-                allReturnsCorrect &= result is OkObjectResult okResult
-                                     && okResult.Value is UserGetModel user
-                                     && user.UserName == username;
+                LogicResult<UserGetModel> result = _userLogicSut.GetByUserName(username);
+                allReturnsCorrect &= result.ResultCode == ResultCode.Ok
+                                     && result.Object.UserName == username;
             }
 
             //assert
@@ -81,8 +79,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             string username = "doesnotexist";
 
             //act
-            IActionResult result = _userControllerSut.GetByUserName(username);
-            bool notFound = result is NotFoundObjectResult;
+            LogicResult<UserGetModel> result = _userLogicSut.GetByUserName(username);
+            bool notFound = result.ResultCode == ResultCode.NotFound;
 
             //assert
             Assert.IsTrue(notFound, "Should return not found!");
@@ -102,10 +100,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             bool allReturnsCorrect = true;
             foreach (string email in emails)
             {
-                IActionResult result = _userControllerSut.GetByEmail(email);
-                allReturnsCorrect &= result is OkObjectResult okResult
-                                     && okResult.Value is UserGetModel user
-                                     && user.Email == email;
+                LogicResult<UserGetModel> result = _userLogicSut.GetByEmail(email);
+                allReturnsCorrect &= result.ResultCode == ResultCode.Ok
+                                     && result.Object.Email == email;
             }
 
             //assert
@@ -119,8 +116,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             string email = "does@not.exist";
 
             //act
-            IActionResult result = _userControllerSut.GetByEmail(email);
-            bool notFound = result is NotFoundObjectResult;
+            LogicResult<UserGetModel> result = _userLogicSut.GetByEmail(email);
+            bool notFound = result.ResultCode == ResultCode.NotFound;
 
             //assert
             Assert.IsTrue(notFound, "Should return not found!");
@@ -137,12 +134,10 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             var privilege = Privilege.Admin;
 
             //act
-            IActionResult result = _userControllerSut.GetByPrivilege(privilege);
-            bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is List<UserGetModel> resultUsers
-                              && resultUsers.Count == _usersList.Count(u => u.Privilege == privilege)
-                              && resultUsers.All(u => _usersList.Any(x => x.Id == u.Id));
-
+            LogicResult<List<UserGetModel>> result = _userLogicSut.GetByPrivilege(privilege);
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object.Count == _usersList.Count(u => u.Privilege == privilege)
+                              && result.Object.All(u => _usersList.Any(x => x.Id == u.Id));
             //assert
             Assert.IsTrue(isResultOk, "All expected users should be retrieved!");
         }
@@ -156,10 +151,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
         {
             //arrange
             //act
-            IActionResult result = _userControllerSut.GetCount();
-            bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is int count
-                              && count == _usersList.Count;
+            LogicResult<int> result = _userLogicSut.GetCount();
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object == _usersList.Count;
 
             //assert
             Assert.IsTrue(isResultOk, "Expected count should be retrieved!");
@@ -178,11 +172,10 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             var expected = _usersList.OrderBy(u => u.Id).Skip(pageId * pageSize).Take(pageSize).ToList();
 
             //act
-            IActionResult result = _userControllerSut.GetPage(pageId, pageSize);
-            bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is List<UserGetModel> users
-                              && users.Count == expected.Count
-                              && users.Select((u, idx) => expected[idx].Id == u.Id).All(b => b);
+            LogicResult<List<UserGetModel>> result = _userLogicSut.GetPage(pageId, pageSize);
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object.Count == expected.Count
+                              && result.Object.Select((u, idx) => expected[idx].Id == u.Id).All(b => b);
 
             //assert
             Assert.IsTrue(isResultOk, "Expected count should be retrieved!");

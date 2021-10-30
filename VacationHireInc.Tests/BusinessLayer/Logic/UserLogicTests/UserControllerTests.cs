@@ -9,16 +9,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using VacationHireInc.BusinessLayer.Interfaces;
+using VacationHireInc.BusinessLayer.Logic;
 using VacationHireInc.DataLayer.Interfaces;
 using VacationHireInc.DataLayer.Models;
 using VacationHireInc.Security;
 using VacationHireInc.Security.Interfaces;
 using VacationHireInc.WebApi.Controllers;
 
-namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
+namespace VacationHireInc.Tests.BusinessLayer.Logic.UserLogicTests
 {
     [TestClass]
-    public partial class UserControllerTests
+    public partial class UserLogicTests
     {
         private Mock<IRepository<User>> _userRepositoryMock;
         private Mock<IDataAccessProvider> _dataAccessProviderMock;
@@ -26,7 +28,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
         private IDataAccessProvider _dataAccessProvider;
         private IJwtHelper _jwtHelper;
         private IHashingHelper _hashingHelper;
-        private UserController _userControllerSut;
+        private IUserLogic _userLogicSut;
         private List<User> _usersList;
 
         [TestInitialize]
@@ -39,7 +41,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _dataAccessProvider = _dataAccessProviderMock.Object;
             _jwtHelper = _jwtHelperMock.Object;
             _hashingHelper = new HashingHelper(Encoding.Unicode.GetBytes("eZ3YPldh0JKB1lXODe3KKEjsqMFZ0krP"));
-            _userControllerSut = new UserController(_dataAccessProvider, _jwtHelper, _hashingHelper);
+            _userLogicSut = new UserLogic(_dataAccessProvider, _jwtHelper, _hashingHelper);
             _usersList = GetUsersList(_hashingHelper);
 
             _dataAccessProviderMock.SetupGet(x => x.UserRepository).Returns(_userRepositoryMock.Object);
@@ -78,7 +80,7 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _dataAccessProvider = null;
             _jwtHelper = null;
             _hashingHelper = null;
-            _userControllerSut = null;
+            _userLogicSut = null;
             _usersList = null;
         }
 

@@ -10,9 +10,9 @@ using System.Linq;
 using VacationHireInc.BusinessLayer.Models;
 using VacationHireInc.DataLayer.Models;
 
-namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
+namespace VacationHireInc.Tests.BusinessLayer.Logic.UserLogicTests
 {
-    public partial class UserControllerTests
+    public partial class UserLogicTests
     {
         [TestMethod]
         public void Create_ReturnCreated()
@@ -33,8 +33,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Create(token, newUser);
-            bool isResultOk = result is CreatedResult
+            LogicResult<object> result = _userLogicSut.Create(token, newUser);
+            bool isResultOk = result.ResultCode == ResultCode.Created
                               && _usersList.Last().Name == newUser.Name
                               && _usersList.Last().Surname == newUser.Surname
                               && _usersList.Last().UserName == newUser.UserName
@@ -66,8 +66,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(false);
 
             //act
-            IActionResult result = _userControllerSut.Create(token, newUser);
-            bool isResultOk = result is UnauthorizedObjectResult;
+            LogicResult<object> result = _userLogicSut.Create(token, newUser);
+            bool isResultOk = result.ResultCode == ResultCode.Unauthorized;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -93,8 +93,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Create(token, newUser);
-            bool isResultOk = result is ForbidResult;
+            LogicResult<object> result = _userLogicSut.Create(token, newUser);
+            bool isResultOk = result.ResultCode == ResultCode.Forbid;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -121,8 +121,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Create(token, newUser);
-            bool isResultOk = result is BadRequestObjectResult;
+            LogicResult<object> result = _userLogicSut.Create(token, newUser);
+            bool isResultOk = result.ResultCode == ResultCode.BadRequest;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);

@@ -10,9 +10,9 @@ using System.Linq;
 using VacationHireInc.DataLayer.Models;
 using VacationHireInc.BusinessLayer.Models;
 
-namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
+namespace VacationHireInc.Tests.BusinessLayer.Logic.UserLogicTests
 {
-    public partial class UserControllerTests
+    public partial class UserLogicTests
     {
         [TestMethod]
         public void Update_ReturnOk()
@@ -35,10 +35,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Update(token, updatedUser);
-            bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is Guid id
-                              && id == userToUpdate.Id
+            LogicResult<Guid> result = _userLogicSut.Update(token, updatedUser);
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object == userToUpdate.Id
                               && updatedUser.Name == userToUpdate.Name
                               && updatedUser.Surname == userToUpdate.Surname
                               && updatedUser.UserName == userToUpdate.UserName
@@ -72,8 +71,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(false);
 
             //act
-            IActionResult result = _userControllerSut.Update(token, updatedUser);
-            bool isResultUnauthorized = result is UnauthorizedObjectResult;
+            LogicResult<Guid> result = _userLogicSut.Update(token, updatedUser);
+            bool isResultUnauthorized = result.ResultCode == ResultCode.Unauthorized;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -101,8 +100,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Update(token, updatedUser);
-            bool isResultOk = result is ForbidResult;
+            LogicResult<Guid> result = _userLogicSut.Update(token, updatedUser);
+            bool isResultOk = result.ResultCode == ResultCode.Forbid;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -130,8 +129,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Update(token, updatedUser);
-            bool isResultOk = result is BadRequestObjectResult;
+            LogicResult<Guid> result = _userLogicSut.Update(token, updatedUser);
+            bool isResultOk = result.ResultCode == ResultCode.BadRequest;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -159,12 +158,12 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Update(token, updatedUser);
-            bool isResultOk = result is ForbidResult;
+            LogicResult<Guid> result = _userLogicSut.Update(token, updatedUser);
+            bool isResultOk = result.ResultCode == ResultCode.Forbid;
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
-            Assert.IsTrue(isResultOk, "Should return bad request when trying to update another admin");
+            Assert.IsTrue(isResultOk, "Should return forbid when trying to update another admin");
         }
     }
 }

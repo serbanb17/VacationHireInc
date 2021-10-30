@@ -8,9 +8,9 @@ using System.Linq;
 using VacationHireInc.DataLayer.Models;
 using VacationHireInc.BusinessLayer.Models;
 
-namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
+namespace VacationHireInc.Tests.BusinessLayer.Logic.UserLogicTests
 {
-    public partial class UserControllerTests
+    public partial class UserLogicTests
     {
         [TestMethod]
         public void Authenticate_ReturnOk()
@@ -25,10 +25,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             string expected = _jwtHelper.GetJwt(targetUser.Id);
 
             //act
-            IActionResult result = _userControllerSut.Authenticate(userAuthenticateModel);
-            bool isResultOk = result is OkObjectResult resultObj
-                                    && resultObj.Value is string token
-                                    && token == expected;
+            LogicResult<string> result = _userLogicSut.Authenticate(userAuthenticateModel);
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object == expected;
 
             //assert
             Assert.IsTrue(isResultOk, "Should return correct token!");
@@ -47,8 +46,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             string expected = _jwtHelper.GetJwt(targetUser.Id);
 
             //act
-            IActionResult result = _userControllerSut.Authenticate(userAuthenticateModel);
-            bool isResultOk = result is NotFoundObjectResult;
+            LogicResult<string> result = _userLogicSut.Authenticate(userAuthenticateModel);
+            bool isResultOk = result.ResultCode == ResultCode.NotFound;
 
             //assert
             Assert.IsTrue(isResultOk, "Should return not found username!");
@@ -67,8 +66,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             string expected = _jwtHelper.GetJwt(targetUser.Id);
 
             //act
-            IActionResult result = _userControllerSut.Authenticate(userAuthenticateModel);
-            bool isResultOk = result is UnauthorizedObjectResult;
+            LogicResult<string> result = _userLogicSut.Authenticate(userAuthenticateModel);
+            bool isResultOk = result.ResultCode == ResultCode.Unauthorized;
 
             //assert
             Assert.IsTrue(isResultOk, "Should return not unauthorized!");

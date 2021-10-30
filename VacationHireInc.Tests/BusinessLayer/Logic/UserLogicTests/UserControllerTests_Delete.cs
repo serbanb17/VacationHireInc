@@ -7,11 +7,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Linq;
+using VacationHireInc.BusinessLayer.Models;
 using VacationHireInc.DataLayer.Models;
 
-namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
+namespace VacationHireInc.Tests.BusinessLayer.Logic.UserLogicTests
 {
-    public partial class UserControllerTests
+    public partial class UserLogicTests
     {
         [TestMethod]
         public void Delete_ReturnOk()
@@ -25,10 +26,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is Guid id
-                              && id == idToDelete
+            LogicResult<Guid> result = _userLogicSut.Delete(token, idToDelete);
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object == idToDelete
                               && !_usersList.Any(u => u.Id == idToDelete);
 
             //assert
@@ -48,10 +48,9 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is OkObjectResult resultObj
-                              && resultObj.Value is Guid id
-                              && id == idToDelete
+            LogicResult<Guid> result = _userLogicSut.Delete(token, idToDelete);
+            bool isResultOk = result.ResultCode == ResultCode.Ok
+                              && result.Object == idToDelete
                               && !_usersList.Any(u => u.Id == idToDelete);
 
             //assert
@@ -71,8 +70,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is ForbidResult && _usersList.Contains(userToDelete);
+            LogicResult<Guid> result = _userLogicSut.Delete(token, idToDelete);
+            bool isResultOk = result.ResultCode == ResultCode.Forbid && _usersList.Contains(userToDelete);
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -91,8 +90,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is BadRequestObjectResult && _usersList.Contains(userToDelete);
+            LogicResult<Guid> result = _userLogicSut.Delete(token, idToDelete);
+            bool isResultOk = result.ResultCode == ResultCode.BadRequest && _usersList.Contains(userToDelete);
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -111,8 +110,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(true);
 
             //act
-            IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is ForbidResult && _usersList.Contains(userToDelete);
+            LogicResult<Guid> result = _userLogicSut.Delete(token, idToDelete);
+            bool isResultOk = result.ResultCode == ResultCode.Forbid && _usersList.Contains(userToDelete);
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
@@ -131,8 +130,8 @@ namespace VacationHireInc.Tests.WebApi.Controllers.UserControllerTests
             _jwtHelperMock.Setup(x => x.IsJwtValid(It.IsAny<string>(), It.IsAny<bool>(), out outId)).Returns(false);
 
             //act
-            IActionResult result = _userControllerSut.Delete(token, idToDelete);
-            bool isResultOk = result is UnauthorizedObjectResult && _usersList.Contains(userToDelete);
+            LogicResult<Guid> result = _userLogicSut.Delete(token, idToDelete);
+            bool isResultOk = result.ResultCode == ResultCode.Unauthorized && _usersList.Contains(userToDelete);
 
             //assert
             _dataAccessProviderMock.Verify(x => x.Save(), Times.Never);
