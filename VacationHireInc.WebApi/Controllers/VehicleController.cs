@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 using VacationHireInc.BusinessLayer.Interfaces;
 using VacationHireInc.BusinessLayer.Logic;
 using VacationHireInc.BusinessLayer.Models;
@@ -28,10 +29,10 @@ namespace VacationHireInc.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] Guid id)
+        public async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            var usdRatesTask = _currencyRatesUsdProvider.GetRatesAsync();
-            return _vehicleLogic.Get(id, usdRatesTask.Result).GetActionResult();
+            var usdRates = await _currencyRatesUsdProvider.GetRatesAsync();
+            return _vehicleLogic.Get(id, usdRates).GetActionResult();
         }
 
         [HttpGet("fuelTypes")]
@@ -53,17 +54,17 @@ namespace VacationHireInc.WebApi.Controllers
         }
 
         [HttpGet("page/{pageId}/{pageSize}")]
-        public IActionResult GetPage([FromRoute] int pageId, [FromRoute] int pageSize)
+        public async Task<IActionResult> GetPage([FromRoute] int pageId, [FromRoute] int pageSize)
         {
-            var usdRatesTask = _currencyRatesUsdProvider.GetRatesAsync();
-            return _vehicleLogic.GetPage(pageId, pageSize, usdRatesTask.Result).GetActionResult();
+            var usdRates = await _currencyRatesUsdProvider.GetRatesAsync();
+            return _vehicleLogic.GetPage(pageId, pageSize, usdRates).GetActionResult();
         }
 
         [HttpPost("filter")]
-        public IActionResult GetByFilter([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleFilter vehicleFilter)
+        public async Task<IActionResult> GetByFilter([FromHeader(Name = "Authorization")] string token, [FromBody] VehicleFilter vehicleFilter)
         {
-            var usdRatesTask = _currencyRatesUsdProvider.GetRatesAsync();
-            return _vehicleLogic.GetByFilter(token, vehicleFilter, usdRatesTask.Result).GetActionResult();
+            var usdRates = await _currencyRatesUsdProvider.GetRatesAsync();
+            return _vehicleLogic.GetByFilter(token, vehicleFilter, usdRates).GetActionResult();
         }
 
         [HttpPost]
